@@ -1,0 +1,34 @@
+{% load get_dict_val %}
+
+{% with my_ratings|get_dict_val:object.id  as current_rating %}
+<div class="card shadow-sm">
+          
+    <div class="card-body">
+
+      <h3>{{ object.title }} | {% if object.release_date != 'UNKNOWN'%}<small>{{ object.release_date }}</small>{% endif %}</h3>
+      <small>{{ object.id }}</small>
+
+      <p class="card-text">{{ object.overview }}</p>
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="btn-group">
+          {% if object.get_absolute_url not in request.path %}
+          <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ object.get_absolute_url }}">View</a>
+          {% endif %}
+
+         
+        </div>
+        <div>
+          {% if skip is True %}
+            <button hx-post="/rate/anime/" class="btn btn-outline-secondary">Skip</button>
+          {% endif %}
+          {% include 'ratings/snippet/rating-choices.html' with object_id=object.id current_rating=current_rating %}
+            
+            {% if object.rating_avg is not None %}
+            <small class="text-muted">{{ object.rating_avg }} ({{ object.rating_count }})</small>
+            {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endwith %}
